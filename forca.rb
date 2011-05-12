@@ -51,3 +51,30 @@ private
   end
 end
 
+class Dificult
+  @status = []
+  @actual_status = []
+
+  def intialize
+    @status = %W("cabeça corpo mãos pernas rosto")
+  end 
+  
+  def add_status
+    @actual_status << @status[@actual_status.length]
+  end
+
+  def can_try?
+    !(@status == @actual_status)
+  end
+  
+  def number_of_chances()
+    @status - @actual_status
+  end
+end
+
+class HardDificult < Dificult
+  def initialize
+     @status = %W("cabeça corpo")
+  end  
+end
+
