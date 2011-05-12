@@ -1,0 +1,5 @@
+f = Forca.new("word how u try before u die")
+
+f.input 'l' #=> where 'l' is a letter how u can try find in word
+f.output  #=> actual status of the game
+
