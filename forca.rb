@@ -1,11 +1,8 @@
 class Forca
-  @status = []
-  @status_atual = []
-
-  def initialize(palavra)
+  
+  def initialize(palavra = "", dificult = :easy)
     configure_word(palavra)
-    @status =  %W("cabeça corpo mãos pernas rosto")
-    @status_atual = []
+    configure_dificult(dificult)
     output
   end
   
@@ -13,31 +10,31 @@ class Forca
     if valid_letter(letra)
       replace_letter(letra)
     else
-      adiciona_status()
+      @dificult.add_status
     end
 
     output
   end
 
   def output
-    if @jogo[:exibicao] == @jogo[:palavra] || @status == @status_atual
+    if @jogo[:exibicao] == @jogo[:palavra] || !@dificult.can_try?
       puts "Seu Jogo terminou tente novamente"
     else
       puts "Letras conseguidas : #{@jogo[:exibicao].to_s}"
       puts ""
-      puts "Status:#{@status_atual.join(' ')}"
+      puts "Status:#{@dificult.to_s}"
       puts ""
-      puts "Quantidade de Chances: #{@status.length - @status_atual.length}"
+      puts "Quantidade de Chances: #{@dificult.number_of_chances}"
     end
   end
    
-  def adiciona_status()
-    @status_atual << @status[@status_atual.length]
-  end
-
 private 
   def configure_word(word)
     @jogo = { :palavra => word.split(//), :exibicao => word.gsub(/\w/, '?').split(//)}
+  end
+
+  def configure_dificult()
+    @dificult = DificultFactory.get_dificult(
   end
 
   def valid_letter(letra)
@@ -51,11 +48,14 @@ private
   end
 end
 
+
+
+
 class Dificult
   @status = []
   @actual_status = []
 
-  def intialize
+  def initialize
     @status = %W("cabeça corpo mãos pernas rosto")
   end 
   
@@ -64,17 +64,47 @@ class Dificult
   end
 
   def can_try?
-    !(@status == @actual_status)
+    number_of_chances > 0
   end
   
   def number_of_chances()
-    @status - @actual_status
+    @status.length - @actual_status.length
   end
+  
+  def to_s
+     @actual_status.join(' ')
+  end
+end
+
+
+class MediumDificult < Dificult
+  def initialize
+      @status = %W("cabeça corpo resto")
+      @actual_status = []
+  end  
 end
 
 class HardDificult < Dificult
   def initialize
-     @status = %W("cabeça corpo")
+    @status = %W("cabeça corpo")
+    @actual_status = []
   end  
 end
 
+class DificultFactory
+  @dificults = {:easy => Dificult.new, :medium => MediumDificult.new, :hard => HardDificult.new }
+
+  def self.get_dificult(dificult)
+    @dificults[dificult] || @dificults[:hard]
+  end
+  
+  def self.get_dificult_by_word(word)
+
+    case word.size
+      when 0..5: @dificults[:easy]
+      when 6..10: @dificults[:medium]
+      else @dificults[:hard]
+    end     
+
+  end
+end
