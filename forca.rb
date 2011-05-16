@@ -17,7 +17,9 @@ class Forca
   end
 
   def output
-    if @jogo[:exibicao] == @jogo[:palavra] || !@dificult.can_try?
+    if @jogo[:exibicao] == @jogo[:palavra]
+      puts "Você ganhou parabens palavra: #{@jogo[:palavra].to_s}"      
+    elsif  !@dificult.can_try?
       puts "Seu Jogo terminou tente novamente"
     else
       puts "Letras conseguidas : #{@jogo[:exibicao].join(' ')}"
