@@ -20,7 +20,7 @@ class Forca
     if @jogo[:exibicao] == @jogo[:palavra] || !@dificult.can_try?
       puts "Seu Jogo terminou tente novamente"
     else
-      puts "Letras conseguidas : #{@jogo[:exibicao].to_s}"
+      puts "Letras conseguidas : #{@jogo[:exibicao].join(' ')}"
       puts ""
       puts "Status:#{@dificult}"
       puts ""
@@ -30,7 +30,7 @@ class Forca
    
 private 
   def configure_word(word)
-    @jogo = { :palavra => word.split(//), :exibicao => word.gsub(/\w/, '_ ').split(//)}
+    @jogo = { :palavra => word.split(//), :exibicao => word.gsub(/\w/, '_').split(//)}
   end
 
   def configure_dificult(dificult)
@@ -42,9 +42,7 @@ private
   end
 
   def replace_letter(letra)
-    @jogo[:palavra].each_index do |index|
-      @jogo[:exibicao][index] = letra if @jogo[:palavra][index].downcase == letra.downcase
-    end
+    @jogo[:palavra].each_with_index {|letter,index| @jogo[:exibicao][index] = letter if letter.downcase == letra.downcase}
   end
 end
 
