@@ -22,7 +22,7 @@ class Forca
     else
       puts "Letras conseguidas : #{@jogo[:exibicao].to_s}"
       puts ""
-      puts "Status:#{@dificult.to_s}"
+      puts "Status:#{@dificult}"
       puts ""
       puts "Quantidade de Chances: #{@dificult.number_of_chances}"
     end
@@ -30,7 +30,7 @@ class Forca
    
 private 
   def configure_word(word)
-    @jogo = { :palavra => word.split(//), :exibicao => word.gsub(/\w/, '?').split(//)}
+    @jogo = { :palavra => word.split(//), :exibicao => word.gsub(/\w/, '_ ').split(//)}
   end
 
   def configure_dificult(dificult)
