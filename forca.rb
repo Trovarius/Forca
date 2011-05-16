@@ -33,8 +33,8 @@ private
     @jogo = { :palavra => word.split(//), :exibicao => word.gsub(/\w/, '?').split(//)}
   end
 
-  def configure_dificult()
-    @dificult = DificultFactory.get_dificult(
+  def configure_dificult(dificult)
+    @dificult = ([:easy, :medium, :hard].include? dificult) ? DificultFactory.get_dificult(dificult) : DificultFactory.get_dificult_by_word(@jogo[:palavra])
   end
 
   def valid_letter(letra)
@@ -48,15 +48,13 @@ private
   end
 end
 
-
-
-
 class Dificult
   @status = []
   @actual_status = []
 
-  def initialize
-    @status = %W("cabeça corpo mãos pernas rosto")
+  def initialize(dificults = %w("cabeça corpo mãos pernas rosto"))
+    @status = dificults
+    @actual_status = []
   end 
   
   def add_status
@@ -76,34 +74,19 @@ class Dificult
   end
 end
 
-
-class MediumDificult < Dificult
-  def initialize
-      @status = %W("cabeça corpo resto")
-      @actual_status = []
-  end  
-end
-
-class HardDificult < Dificult
-  def initialize
-    @status = %W("cabeça corpo")
-    @actual_status = []
-  end  
-end
-
 class DificultFactory
-  @dificults = {:easy => Dificult.new, :medium => MediumDificult.new, :hard => HardDificult.new }
+  @dificults = {:easy => %w("cabeça corpo mãos pernas rosto"), :medium => %w("cabeça corpo resto"), :hard => %w("cabeça corpo") }
 
   def self.get_dificult(dificult)
-    @dificults[dificult] || @dificults[:hard]
+    Dificult.new(@dificults[dificult] || @dificults[:hard])
   end
   
   def self.get_dificult_by_word(word)
 
     case word.size
-      when 0..5: @dificults[:easy]
-      when 6..10: @dificults[:medium]
-      else @dificults[:hard]
+      when 0..5: return Dificult.new(@dificults[:easy])
+      when 6..10: return  Dificult.new(@dificults[:medium])
+      else return Dificult.new(@dificults[:hard])
     end     
 
   end
